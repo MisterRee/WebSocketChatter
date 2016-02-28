@@ -5,7 +5,7 @@
   "main": "./src/server.js",
   "scripts": {
     "test": "echo complete",
-	"pretest": "jshint ./src",
+    "pretest": "jshint ./src",
     "start": "node server.js"
   },
   "repository": {
