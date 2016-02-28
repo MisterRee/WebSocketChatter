@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- import the websocket client library. You can code websockets from scratch
+         but we will just import a library. In this case we are using socket.io which is 
+         one of the most popular and feature rich websocket libraries.
+         
+         You can point the src for the script to any host online, but
+         by default the socket.io nodejs library will host the client library
+         online at your node.js address under /socket.io/socket.io.js 
+         You can disable that on the server if desired
+    -->
+	<meta charset="utf-8">
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+	var connectionStatus = false;
+	var socket;
+	
+		function connectSocket(e){
+			socket = io.connect();
+		
+			if(connectionStatus){
+				return;
+			};
+		
+			socket.on('connect', function(){
+				connectionStatus = true;
+				
+				var user = document.querySelector("#username").value;
+				
+				if(!user){
+					user = 'unknown';
+				}
+				
+				socket.emit('join', {name:user});
+			});
+			
+			socket.on('msg', function(data){
+				addToChat(data);
+			});
+		}
+		
+		function messageSocket(e){
+			
+			if(!connectionStatus){
+				return;
+			}
+			
+			var user = document.querySelector("#username").value;
+			
+			if(!user){
+				user = 'unknown';
+			}
+			
+			var message = document.querySelector("#message").value;
+			document.querySelector("#message").value = "";
+			
+			socket.emit('msgToServer', {name:user, msg:message});
+			
+			socket.on('promptRoomChange', function(data){
+				var roomInput;
+				
+				if(roomInput === undefined){
+					roomInput = prompt("Input Room Number", "0");
+				}
+				
+				if (roomInput != null){
+					if(roomInput == parseInt(roomInput)){
+						socket.emit('roomChange', roomInput);
+					}
+				}
+			});
+			
+			socket.on('clear', function(){
+				document.querySelector("#chat").value = "";
+			});
+		}
+		
+		function handle(e){
+			if(!connectionStatus){
+				return;
+			}
+			
+			if(e.keyCode == 13){
+				messageSocket(e);
+			}
+		}
+		
+		function init(){
+			var startText = "Welcome to websocketchatter! \n";
+			startText += "Select a Username and click connect to get started. \n";
+			startText += "Type in '/help' for console commands.";
+			document.querySelector("#chat").value = startText;
+
+			var connect = document.querySelector("#connect");
+			connect.addEventListener('click', connectSocket);
+			
+			var send = document.querySelector("#send");
+			send.addEventListener('click', messageSocket);
+		}
+		
+		function addToChat(text){
+			var previousText = document.querySelector("#chat").value
+			document.querySelector("#chat").value = previousText + "\n" + text;
+		}
+		
+		window.onload = init;
+	</script>
+	<style>
+		body{
+			position: relative;
+			text-align: center;
+			width: 100%;
+			height: 100vh;
+			margin: 0px;
+		}
+		
+		canvas{
+			width: 100%;
+			height: 100%;
+		}
+	
+		div{
+			display: block;
+			position: absolute;
+			width: 50%;
+			top: 50%; bottom: 0; right: 0; left: 0;
+			transform: translateY(-50%);
+			resize: both;
+			margin: 0 auto;
+			padding: 10px;
+		}
+		
+		section{
+			display: inline;
+			overflow: hidden;
+		}
+		
+		input #username #message{
+			
+		}
+	
+		textarea {
+			display: block;
+			width: 100%;
+			margin-left: auto;
+			margin-right: auto;
+			resize: vertical;
+			background-color: #EEEEEE;
+		}
+	</style>
+</head>
+<body>
+	<canvas></canvas>
+	<div>
+		<section>
+			<label for="user">Username:</label>
+			<input id="username" name="user" type="text"/>
+			<input id="connect" type='button' value='connect'/>
+		</section>
+		<textarea id="chat" rows="20" cols="40" readonly> </textarea>
+		<section>
+			<label for="message">Message:</label>
+			<input id="message" name="message" type="text" onkeydown="handle(event)"/>
+			<input id="send" type="button" value="send"/>
+		</section>
+	</div>
+</body>
+</html>

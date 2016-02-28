@@ -1,0 +1,32 @@
+{
+  "name": "websocketchatter",
+  "version": "1.0.0",
+  "description": "Lets clients message each other with a server",
+  "main": "./src/server.js",
+  "scripts": {
+    "test": "echo complete",
+	"pretest": "jshint ./src",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MisterRee/WebSocketChatter.git"
+  },
+  "keywords": [
+    "NPM",
+    "node",
+    "websockets"
+  ],
+  "author": "Danny Lee",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MisterRee/WebSocketChatter/issues"
+  },
+  "homepage": "https://github.com/MisterRee/WebSocketChatter#readme",
+  "dependencies": {
+    "socket.io": "^1.4.5"
+  },
+  "devDependencies": {
+    "jshint": "^2.9.1"
+  }
+}
