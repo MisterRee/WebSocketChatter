@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo complete",
     "pretest": "jshint ./src",
-    "start": "node server.js"
+    "start": "node ./src/server.js"
   },
   "repository": {
     "type": "git",
